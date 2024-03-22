@@ -30,62 +30,84 @@ function displayQuestions(questions) {
 
     questions.forEach((question, questionIndex) => {
         const questionElement = document.createElement('div');
+        questionElement.classList.add('question-item', 'p-3', 'mb-2', 'bg-white', 'rounded', 'shadow-sm');
         questionElement.innerHTML = `<h3>${question.content}</h3>`;
         questionsContainer.appendChild(questionElement);
 
         const formElement = document.createElement('form');
+        formElement.classList.add('mb-3');
         formElement.onsubmit = (e) => handleSubmitAnswer(e, question.id);
         questionElement.appendChild(formElement);
 
         question.answers.forEach((answer, answerIndex) => {
-            const answerLabel = document.createElement('label');
-            answerLabel.htmlFor = `question-${questionIndex}-answer-${answerIndex}`;
-            answerLabel.textContent = answer.content;
-            formElement.appendChild(answerLabel);
+            const answerDiv = document.createElement('div');
+            answerDiv.classList.add('form-check');
 
             const answerInput = document.createElement('input');
+            answerInput.classList.add('form-check-input');
             answerInput.type = 'radio';
             answerInput.id = `question-${questionIndex}-answer-${answerIndex}`;
             answerInput.name = `question-${questionIndex}-answer`;
             answerInput.value = answer.id;
-            formElement.insertBefore(answerInput, answerLabel);
+            answerDiv.appendChild(answerInput);
+
+            const answerLabel = document.createElement('label');
+            answerLabel.classList.add('form-check-label');
+            answerLabel.htmlFor = answerInput.id;
+            answerLabel.textContent = answer.content;
+            answerDiv.appendChild(answerLabel);
+
+            formElement.appendChild(answerDiv);
         });
 
+        const buttonsDiv = document.createElement('div');
+        buttonsDiv.classList.add('mt-2');
+        questionElement.appendChild(buttonsDiv);
+
         const submitButton = document.createElement('button');
+        submitButton.classList.add('btn', 'btn-primary', 'me-2');
         submitButton.type = 'submit';
         submitButton.textContent = 'Submit Answer';
         formElement.appendChild(submitButton);
 
         const editButton = document.createElement('button');
+        editButton.classList.add('btn', 'btn-success');
         editButton.textContent = 'Edit Question';
         editButton.type = 'button';
         editButton.onclick = () => {
+            resetForm();
+
             const form = document.getElementById('questionForm');
-
-            form.question.value = question.content;
-            form.answer1.value = question.answers.length > 0 ? question.answers[0].content : '';
-            form.answer2.value = question.answers.length > 1 ? question.answers[1].content : '';
-
-            if (question.answers.some(answer => answer.correct)) {
-                const correctAnswerIndex = question.answers.findIndex(answer => answer.correct);
-                form.correct.selectedIndex = correctAnswerIndex + 1;
-            }
-
-            form.questionId.value = question.id;
+            form.querySelector('input[name="question"]').value = question.content;
+            form.querySelector('input[name="answer1"]').value = question.answers.length > 0 ? question.answers[0].content : '';
+            form.querySelector('input[name="answer2"]').value = question.answers.length > 1 ? question.answers[1].content : '';
+            form.querySelector('select[name="correct"]').value = question.answers.some(answer => answer.correct) ? 'answer1' : 'answer2';
+            form.querySelector('input[name="questionId"]').value = question.id;
 
             const submitButton = document.getElementById('submitQuestionButton');
             submitButton.textContent = 'Modifier';
+            submitButton.classList.remove('btn-primary');
+            submitButton.classList.add('btn-warning');
 
             const cancelButton = document.getElementById('cancelEditButton');
-            cancelButton.style.display = 'inline';
+            cancelButton.style.display = 'inline-block';
+            cancelButton.addEventListener('click', () => {
+                resetForm();
+            });
         };
+
 
         questionElement.appendChild(editButton);
 
         const deleteButton = document.createElement('button');
+        deleteButton.classList.add('btn', 'btn-danger', 'ms-2');
         deleteButton.textContent = 'Delete Question';
         deleteButton.type = 'button';
-        deleteButton.onclick = () => deleteQuestion(question.id);
+        deleteButton.onclick = () => {
+            if (confirm("Are you sure you want to delete this question?")) {
+                deleteQuestion(question.id);
+            }
+        };
         questionElement.appendChild(deleteButton);
     });
 }
@@ -121,10 +143,13 @@ function resetForm() {
 
     const submitButton = document.getElementById('submitQuestionButton');
     submitButton.textContent = 'Créer Question';
+    submitButton.classList.remove('btn-warning');
+    submitButton.classList.add('btn-primary');
 
     const cancelButton = document.getElementById('cancelEditButton');
     cancelButton.style.display = 'none';
 }
+
 
 function updateQuestion(questionId, questionData) {
     fetch(`/quiz/questions/${questionId}`, {
