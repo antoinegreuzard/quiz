@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<h1>Welcome to the Quiz Platform!</h1>
+<div id="questionsContainer"></div>
+<form id="questionForm">
+  <input type="text" name="question" placeholder="Question" required/>
+  <input type="text" name="answer1" placeholder="Réponse 1" required/>
+  <input type="text" name="answer2" placeholder="Réponse 2" required/>
+  <select name="correct">
+    <option value="answer1">Réponse 1 est correcte</option>
+    <option value="answer2">Réponse 2 est correcte</option>
+  </select>
+  <button type="submit">Créer Question</button>
+</form>
+<script src="js/quizManager.js"></script>
+</body>
+</html>
