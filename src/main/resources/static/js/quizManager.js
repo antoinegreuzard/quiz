@@ -2,11 +2,8 @@ function fetchQuestions() {
   fetch('/quiz/questions')
     .then(response => response.json())
     .then(questions => {
-      if (Array.isArray(questions)) {
-        displayQuestions(questions);
-      } else {
-        console.error('Received data is not an array:', questions);
-      }
+      console.log("Received questions:", questions);
+      displayQuestions(questions);
     })
     .catch(error => console.error('Error fetching questions:', error));
 }
@@ -31,37 +28,64 @@ function displayQuestions(questions) {
   const questionsContainer = document.getElementById('questionsContainer');
   questionsContainer.innerHTML = '';
 
-  questions.forEach(question => {
+  questions.forEach((question, questionIndex) => {
     const questionElement = document.createElement('div');
     questionElement.innerHTML = `<h3>${question.content}</h3>`;
+    questionsContainer.appendChild(questionElement);
 
-    const answersList = document.createElement('form');
-    answersList.onsubmit = (e) => handleSubmitAnswer(e, question.id);
+    const formElement = document.createElement('form');
+    formElement.onsubmit = (e) => handleSubmitAnswer(e, question.id);
+    questionElement.appendChild(formElement);
 
-    question.answers.forEach(answer => {
-      const answerOption = document.createElement('div');
-      answerOption.innerHTML = `
-        <input type="radio" name="answer" value="${answer.id}" required> ${answer.content}
-      `;
-      answersList.appendChild(answerOption);
+    question.answers.forEach((answer, answerIndex) => {
+      const answerLabel = document.createElement('label');
+      answerLabel.htmlFor = `question-${questionIndex}-answer-${answerIndex}`;
+      answerLabel.textContent = answer.content;
+      formElement.appendChild(answerLabel);
+
+      const answerInput = document.createElement('input');
+      answerInput.type = 'radio';
+      answerInput.id = `question-${questionIndex}-answer-${answerIndex}`;
+      answerInput.name = `question-${questionIndex}-answer`;
+      answerInput.value = answer.id;
+      formElement.insertBefore(answerInput, answerLabel);
     });
 
     const submitButton = document.createElement('button');
     submitButton.type = 'submit';
     submitButton.textContent = 'Submit Answer';
-    answersList.appendChild(submitButton);
+    formElement.appendChild(submitButton);
 
-    questionElement.appendChild(answersList);
-    questionsContainer.appendChild(questionElement);
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete Question';
+    deleteButton.type = 'button';
+    deleteButton.onclick = () => deleteQuestion(question.id);
+    questionElement.appendChild(deleteButton);
   });
 }
 
 function handleSubmitAnswer(e, questionId) {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const answerId = formData.get('answer');
+  const form = e.currentTarget;
+  const answerId = form.querySelector('input[type="radio"]:checked') ? form.querySelector('input[type="radio"]:checked').value : null;
+
+  if (!answerId) {
+    alert("Please select an answer.");
+    return;
+  }
 
   submitAnswer(questionId, answerId);
+}
+
+function deleteQuestion(questionId) {
+  fetch(`/quiz/questions/${questionId}`, {
+    method: 'DELETE',
+  })
+    .then(() => {
+      console.log('Question deleted:', questionId);
+      fetchQuestions();
+    })
+    .catch(error => console.error('Error deleting question:', error));
 }
 
 function submitAnswer(questionId, answerId) {

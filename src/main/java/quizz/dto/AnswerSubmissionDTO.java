@@ -4,7 +4,6 @@ public class AnswerSubmissionDTO {
   private Long questionId;
   private Long answerId;
 
-  // Getter et Setter pour questionId et answerId
   public Long getQuestionId() {
     return questionId;
   }
