@@ -67,12 +67,12 @@ function displayQuestions(questions) {
         const submitButton = document.createElement('button');
         submitButton.classList.add('btn', 'btn-primary', 'me-2');
         submitButton.type = 'submit';
-        submitButton.textContent = 'Submit Answer';
+        submitButton.textContent = 'Valider la réponse';
         formElement.appendChild(submitButton);
 
         const editButton = document.createElement('button');
         editButton.classList.add('btn', 'btn-success');
-        editButton.textContent = 'Edit Question';
+        editButton.textContent = 'Modifier la question';
         editButton.type = 'button';
         editButton.onclick = () => {
             resetForm();
@@ -101,10 +101,10 @@ function displayQuestions(questions) {
 
         const deleteButton = document.createElement('button');
         deleteButton.classList.add('btn', 'btn-danger', 'ms-2');
-        deleteButton.textContent = 'Delete Question';
+        deleteButton.textContent = 'Supprimer la question';
         deleteButton.type = 'button';
         deleteButton.onclick = () => {
-            if (confirm("Are you sure you want to delete this question?")) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cette question ?")) {
                 deleteQuestion(question.id);
             }
         };
@@ -118,7 +118,7 @@ function handleSubmitAnswer(e, questionId) {
     const answerId = form.querySelector('input[type="radio"]:checked') ? form.querySelector('input[type="radio"]:checked').value : null;
 
     if (!answerId) {
-        alert("Please select an answer.");
+        alert("Veuillez sélectionner une réponse.");
         return;
     }
 
