@@ -16,46 +16,52 @@ import java.util.Map;
 @RequestMapping("/quiz")
 public class QuizController {
 
-  private final QuizService quizService;
+    private final QuizService quizService;
 
-  @Autowired
-  public QuizController(QuizService quizService) {
-    this.quizService = quizService;
-  }
+    @Autowired
+    public QuizController(QuizService quizService) {
+        this.quizService = quizService;
+    }
 
-  @GetMapping("/questions")
-  public ResponseEntity<List<QuestionDTO>> getAllQuestions() {
-    List<QuestionDTO> questionDTOs = quizService.getAllQuestionDTOs();
-    return ResponseEntity.ok(questionDTOs);
-  }
+    @GetMapping("/questions")
+    public ResponseEntity<List<QuestionDTO>> getAllQuestions() {
+        List<QuestionDTO> questionDTOs = quizService.getAllQuestionDTOs();
+        return ResponseEntity.ok(questionDTOs);
+    }
 
-  @PostMapping("/questions")
-  public ResponseEntity<Question> createQuestion(@RequestBody Question question) {
-    Question createdQuestion = quizService.createQuestion(question);
-    return ResponseEntity.ok(createdQuestion);
-  }
+    @PostMapping("/questions")
+    public ResponseEntity<Question> createQuestion(@RequestBody Question question) {
+        Question createdQuestion = quizService.createQuestion(question);
+        return ResponseEntity.ok(createdQuestion);
+    }
 
-  @GetMapping
-  public ResponseEntity<List<Quiz>> getAllQuizzes() {
-    List<Quiz> quizzes = quizService.getAllQuizzes();
-    return ResponseEntity.ok(quizzes);
-  }
+    @GetMapping
+    public ResponseEntity<List<Quiz>> getAllQuizzes() {
+        List<Quiz> quizzes = quizService.getAllQuizzes();
+        return ResponseEntity.ok(quizzes);
+    }
 
-  @PostMapping
-  public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
-    Quiz createdQuiz = quizService.createQuiz(quiz);
-    return ResponseEntity.ok(createdQuiz);
-  }
+    @PostMapping
+    public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
+        Quiz createdQuiz = quizService.createQuiz(quiz);
+        return ResponseEntity.ok(createdQuiz);
+    }
 
-  @PostMapping("/answers/submit")
-  public ResponseEntity<?> submitAnswer(@RequestBody AnswerSubmissionDTO submission) {
-    boolean isCorrect = quizService.checkAnswer(submission);
-    return ResponseEntity.ok(Map.of("isCorrect", isCorrect));
-  }
+    @PostMapping("/answers/submit")
+    public ResponseEntity<?> submitAnswer(@RequestBody AnswerSubmissionDTO submission) {
+        boolean isCorrect = quizService.checkAnswer(submission);
+        return ResponseEntity.ok(Map.of("isCorrect", isCorrect));
+    }
 
-  @DeleteMapping("/questions/{id}")
-  public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
-    quizService.deleteQuestion(id);
-    return ResponseEntity.ok().build();
-  }
+    @DeleteMapping("/questions/{id}")
+    public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
+        quizService.deleteQuestion(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/questions/{id}")
+    public ResponseEntity<Question> updateQuestion(@PathVariable Long id, @RequestBody QuestionDTO questionDTO) {
+        Question updatedQuestion = quizService.updateQuestion(id, questionDTO);
+        return ResponseEntity.ok(updatedQuestion);
+    }
 }

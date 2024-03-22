@@ -82,4 +82,14 @@ public class QuizService {
     public void deleteQuestion(Long questionId) {
         questionRepository.deleteById(questionId);
     }
+
+    public Question updateQuestion(Long questionId, QuestionDTO questionDTO) {
+        Question question = questionRepository.findById(questionId)
+            .orElseThrow(() -> new RuntimeException("Question not found"));
+
+        question.setContent(questionDTO.getContent());
+
+        return questionRepository.save(question);
+    }
+
 }
